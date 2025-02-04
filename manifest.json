@@ -18,7 +18,6 @@
       "type": "image/png"
     }
   ],
-  ,
   "permissions": [
     "activeTab",
     "storage",

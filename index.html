@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="icon" href="logo.jpg">
+  <title>Quranic</title>
+  <style>
+    :root {
+      --color: #ffffff;
+      --bg-color: #121212;
+      --text-color: #b0b0b0;
+      --primary-color: #4caf50;
+      --accent-color: #03a9f4;
+      --dark-accent: #1e88e5;
+      --light-bg: #1e1e1e;
+      --shadow-color: rgba(0, 0, 0, 0.3);
+    }
+    body {
+      font-family: Arial Sans-Serif;
+      background-color: var(--bg-color);
+      color: var(--color);
+      user-select: none;
+    }
+    #footer {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background-color: var(--bg-color);
+    }
+    button {
+      color: var(--color);
+      background-color: transparent;
+      padding: 15px;
+      border: none;
+    }
+    #footer button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: var(--text-color);
+    }
+    #footer button i {
+      font-size: 25px;
+    }
+    button.active {
+      color: var(--color) !important;
+      font-weight: bold;
+    }
+    #all-surah-list{
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
+      gap: 10px;
+      padding: 10px;
+      margin-bottom: 170px;
+    }
+    .container{
+      background-color: var(--bg-color);
+      border-radius: 15px;
+    }
+    .container img{
+      width: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    #search, #home, #play-audio, #settings{
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow: auto;
+      padding: 4px;
+      top: 0;
+      background-color: var(--bg-color);
+    }
+    #search, #play-audio, #settings{
+      display: none;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+    .switch input {
+      width: 0;
+      opacity: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+    }
+    .list input:checked + .slider {
+      background-color: var(--dark-accent);
+    }
+    .list input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+    .list{
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-radius: 3px;
+      margin-top: 10px;
+      box-shadow: 0 0 20px var(--shadow-color);
+      justify-content: space-between;
+    }
+    #header-search, #header-play-audio{
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 0;
+      padding: 10px;
+      background-color: var(--bg-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #header-search input{
+      width: 100%;
+      padding: 15px;
+      border-radius:90px;
+      outline: none;
+      border: none;
+      box-shadow: 0 0 20px var(--shadow-color);
+    }
+    #header-search button{
+      font-size: 25px;
+    }
+    #header-search button:active{
+      color: var(--color);
+      font-weight: bold;
+    }
+    #results{
+      margin-top: 80px;
+    }
+    #play-audio button{
+      color: var(--color);
+      font-size: 25px;
+    }
+    #bottom{
+      position: fixed;
+      left: 0;
+      right: 0;
+      padding: 20px;
+      bottom: 70px;
+      display: flex;
+      background-color: var(--bg-color);
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+    }
+    #play-audio{
+      align-items: center;
+      justify-content: center;
+    }
+    #bottom button i{
+      font-size: 40px;
+      color: var(--color);
+    }
+    #bottom button{
+      border: 1px solid var(--text-color);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #center img{
+      width: 300px;
+      height: 300px;
+      padding: 10px;
+      box-shadow: 0 0 20px var(--shadow-color);
+      border-radius: 20px;
+    }
+    #progress{
+      width: 100%;
+      padding: 10px;
+      gap: 10px;
+    }
+    #progress-bar{
+      width: 100%;
+      overflow: hidden;
+      height: 5px;
+      border-radius: 90px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      background-color: var(--shadow-color);
+    }
+    #value{
+      width: 0%;
+      height: 5px;
+      border-radius: 90px;
+      background-color: var(--accent-color);
+    }
+    #load{
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: var(--shadow-color);
+    }
+    #spinner{
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 5px solid var(--shadow-color);
+      border-top-color: var(--dark-accent);
+      animation: 1s load linear infinite;
+    }
+    @keyframes load{
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    #current-playing-info{
+      position: fixed;
+      top: 10%;
+      left: 50%;
+      text-align: center;
+      transform: translate(-50%, -50%);
+    }
+    #sheikh{
+      color: var(--text-color);
+    }
+    #surah{
+      color: var(--color);
+    }
+    button:active{
+      color: var(--text-color);
+    }
+    #playing-info{
+      position: fixed;
+      left: 0;
+      right: 0;
+      display: flex;
+      bottom: 60px;
+      flex-direction: column;
+      border-radius: 15px;
+      box-shadow: var(--shadow-color);
+      background-color: var(--bg-color);
+    }
+    #playing-info button{
+      font-size: 25px;
+    }
+    ::-webkit-scrollbar{
+      width: 10px;
+      height: 10px;
+    }
+    ::-webkit-scrollbar-track{
+      background: #f1f1f1;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb{
+      background: #888;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb:hover{
+      background: #555;
+    }
+    #drop{
+      position: relative;
+    }
+    #down{
+      position: fixed;
+      right: 5px;
+      display: flex;
+      box-shadow: 0 0 20px var(--shadow-color);
+      text-align: left;
+      justify-content: flex-start;
+      flex-direction: column;
+      border-radius: 15px;
+      overflow: hidden;
+      height: 0;
+      background: var(--bg-color)
+    }
+    #down button{
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: space-between;
+      box-shadow: 0 0 20px var(--shadow-color);
+    }
+    #down button:active{
+      background-color: var(--shadow-color);
+    }
+    #drop:hover > #down{
+      height: 100px;
+    }
+    #playback{
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--shadow-color);
+    }
+    .speed-btn{
+      color: var(--text-color);
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <div id="home">
+      <div id="all-surah-list"></div>
+    </div>
+    <div id="search">
+      <div id="header-search">
+        <input type="search" id="search-input" placeholder="Search Surah">
+        <button id="submit-search"><i class="bx bx-search"></i></button>
+      </div>
+      <div id="results"></div>
+    </div>
+    <div id="settings">
+      <span style="font-size: 14px; margin-left: 10px; color: var(--text-color)">Settings</span>
+      <div class="list">
+        <span>Dark Mode</span>
+        <div class="switch">
+          <input type="checkbox" checked id="checkbox">
+          <label class="slider" for="checkbox"></label>
+        </div>
+      </div>
+      <span style="font-size: 14px; margin-left: 10px;margin-top: 10px; color: var(--text-color)">Developers</span>
+      <div class="list" onclick="document.getElementById('q').click();">
+        <a id="q" href="https://thequranic.site/" style="display: none;"></a>
+        <span>Quranic Api</span>
+        <i class="bx bx-code" style="padding: 15px;"></i>
+      </div>
+      <div class="list" onclick="document.getElementById('n').click();">
+        <a id="n" href="https://novaxjs2.vercel.app/" style="display: none;"></a>
+        <span>Novaxjs2</span>
+        <i class='bx bxl-nodejs' style="padding: 15px;"></i>
+      </div>
+      <div class="list" onclick="document.getElementById('c').click();">
+        <a id="c" href="https://code-snap.en.uptodown.com/android" style="display: none;"></a>
+        <span>Code Snap</span>
+        <span style="padding: 15px;">
+          <i class="fa-brands fa-html5" style="color: #e3a000;"></i>
+          <i class="fa-brands fa-css3" style="color: #008de3;"></i>
+          <i class="fa-brands fa-js" style="color: #F7DF1E;"></i>
+        </span>
+      </div>
+      <span style="font-size: 14px; margin-left: 10px;margin-top: 10px; color: var(--text-color)">About</span>
+      <div class="list" onclick="document.getElementById('a').click();">
+        <a id="a" href="mailto:cabdiwaaxidsiciid100@gamil.com" style="display: none;"></a>
+        <span>Send an Email</span>
+        <i class="bx bx-envelope" style="padding: 15px;"></i>
+      </div>
+      <span style="font-size: 14px; margin-left: 10px;margin-top: 10px; color: var(--text-color)">Others</span>
+      <div class="list" onclick="document.getElementById('w').click();">
+        <a id="w" href="https://www.appcreator24.com/app2609448-vag0so" style="display: none;"></a>
+        <span>Whoapp</span>
+        <i class="bx bxl-android" style="padding: 15px;"></i>
+      </div>
+      <div class="list" onclick="document.getElementById('s').click();">
+        <a id="s" href="https://small-pencil.website/" style="display: none;"></a>
+        <span>Small Pencil</span>
+        <i class="fa fa-s" style="padding: 15px;"></i>
+      </div>
+      <div class="list" onclick="document.getElementById('p').click();">
+        <a id="p" href="https://whoappstore.vercel.app/" style="display: none;"></a>
+        <span>Whoapp Store</span>
+        <i class="bx bx-download" style="padding: 15px;"></i>
+      </div>
+    </div>
+    <div id="play-audio">
+      <div id="header-play-audio">
+        <button id="close" onclick="document.getElementById('play-audio').style.display = 'none'"><i class="bx bx-x"></i></button>
+        <div id="drop">
+            <button id="more"><i class="bx bx-dots-horizontal-rounded"></i></button>
+            <div id="down">
+                <button id="speed" onclick="document.getElementById('playback').style.display = 'flex';"><span>Playback speed</span><span id="default" style="color: var(--text-color)">1x</span></button>
+                <button id="loop"><span>Loop</span><span id="boolean" style="color: var(--text-color)">False</span></button>
+            </div>
+        </div>
+      </div>
+      <div id="center">
+        <img src="bg.png" alt="" />
+        <audio id="audio" style="display: none;"></audio>
+      </div>
+      <div id="load">
+        <div id="spinner"></div>
+      </div>
+      <div id="current-playing-info">
+        <h3 id="surah"></h3>
+        <span id="sheikh"></span>
+      </div>
+      <div id="bottom">
+        <div id="progress">
+          <div id="currentTime" style="display: flex; align-items: center;">
+            <div id="time">00:00:00</div>
+            <span>/</span>
+            <div id="totalTime">00:00:00</div>
+          </div>
+          <div id="progress-bar">
+            <div id="value"></div>
+          </div>
+        </div>
+        <div class="controls">
+          <button id="prev"><i class='bx bx-skip-previous'></i></button>
+          <button id="play"><i class="bx bx-play"></i></button>
+          <button id="next"><i class='bx bx-skip-next'></i></button>
+        </div>
+      </div>
+    </div>
+    <div id="playing-info">
+      <div id="left" style="display: flex; align-items: center; gap: 10px;">
+        <button id="prev-play"><i class="bx bx-skip-previous"></i></button>
+        <button id="play-current"><i class="bx bx-play"></i></button>
+        <button id="next-play"><i class="bx bx-skip-next"></i></button>
+      </div>
+      <div id="right" style="display: flex; align-items: center; gap: 10px; justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <h3 id="surah-name"></h3>
+          <span>-</span>
+          <span id="sheikh-name"></span>
+        </div>
+        <button id="close2" onclick="document.getElementById('play-audio').style.display = 'flex'"><i class='bx bx-chevron-up'></i></button>
+      </div>
+    </div>
+    <div id="footer">
+      <button id="home-btn" class="active"><i class="bx bx-home"></i><span>Home</span></button>
+      <button id="search-btn"><i class="bx bx-search"></i><span>Search</span></button>
+      <button id="settings-btn"><i class="bx bx-cog"></i><span>Settings</span></button>
+    </div>
+    <div id="playback">
+      <div style="padding: 20px;box-shadow: 0 0 20px var(--shadow-color); border-radius: 15px; background-color: var(--bg-color)">
+        <button id="close3" onclick="document.getElementById('playback').style.display = 'none';" style="color: var(--color);font-size: 18px;"><i class="bx bx-x"></i></button>
+        <div style="box-shadow: 0 0 20px var(--shadow-color);padding: 5px;border-radius: 90px;">
+          <button class="speed-btn" data-speed="0.5">0.5x</button>
+          <button class="speed-btn active" data-speed="1">1x</button>
+          <button class="speed-btn" data-speed="1.5">1.5x</button>
+          <button class="speed-btn" data-speed="2">2x</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    const audio = document.getElementById('audio');
+    let currentTrackIndex = 0;
+    let surahList = [];
+    document.querySelectorAll('#footer button').forEach(btn => {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('#footer button').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        if(this.id === 'home-btn') {
+          document.getElementById('home').style.display = 'block';
+          document.getElementById('search').style.display = 'none';
+          document.getElementById('settings').style.display = 'none';
+          document.getElementById('play-audio').style.display = 'none';
+        } else if(this.id === 'search-btn') {
+          document.getElementById('home').style.display = 'none';
+          document.getElementById('search').style.display = 'block';
+          document.getElementById('play-audio').style.display = 'none';
+          document.getElementById('settings').style.display = 'none';
+        } else if(this.id === 'settings-btn') {
+          document.getElementById('home').style.display = 'none';
+          document.getElementById('search').style.display = 'none';
+          document.getElementById('play-audio').style.display = 'none';
+          document.getElementById('settings').style.display = 'block';
+        }
+      });
+    });
+    document.querySelectorAll('.speed-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+        const speed = parseFloat(this.getAttribute('data-speed'));
+        document.getElementById('default').innerText = speed+'x';
+        audio.playbackRate = speed;
+        localStorage.setItem('speed', speed)
+        this.classList.add('active');
+      });
+    });
+    const apiBase = 'https://www.thequranic.site/api/quran';
+    async function getAllSurah() {
+      try {
+        const res = await fetch(apiBase);
+        const data = await res.json();
+        surahList = data
+        displayAllSurah(data)
+      } catch(err) {
+        console.log(err)
+      }
+    }
+    getAllSurah();
+    async function displayAllSurah(data) {
+      const list = document.getElementById('all-surah-list');
+      list.innerHTML = '';
+      data.forEach((item) => {
+        const container = document.createElement('div');
+        const info = document.createElement('div');
+        const column = document.createElement('div');
+        const img = document.createElement('img');
+        const surah = document.createElement('h3');
+        const sheikh = document.createElement('span');
+        const num = document.createElement('span');
+        img.src = '/bg.png';
+        img.id = item.id;
+        img.addEventListener('click', () => {
+          if (audio.src !== item.url) {
+            document.getElementById('load').style.display = 'flex';
+            currentTrackIndex = (item.id-1) % surahList.length;
+            playAudio(item);
+            document.getElementById('play-audio').style.display = 'flex';
+          }
+        });
+        surah.innerText = item.surah;
+        num.innerText = item.id;
+        sheikh.innerText = item.sheikh;
+        sheikh.style = 'color: var(--text-color)';
+        num.style = 'background-color: var(--light-bg); color: #fff; padding: 5px; border-radius: 15px;';
+        container.classList.add('container')
+        info.classList.add('info');
+        column.append(surah, sheikh);
+        info.append(num, column);
+        container.append(img, info);
+        list.append(container);
+      })
+    }
+    const toggleSwitch = document.querySelector('.switch input');
+    function toggleDarkMode(isDarkMode) {
+      const root = document.documentElement;
+      if (isDarkMode) {
+        root.style.setProperty('--color', '#ffffff');
+        root.style.setProperty('--bg-color', '#121212');
+        root.style.setProperty('--text-color', '#b0b0b0');
+        root.style.setProperty('--light-bg', '#1e1e1e');
+        root.style.setProperty('--shadow-color', 'rgba(0, 0, 0, 0.3)');
+      } else {
+        root.style.setProperty('--color', '#000000');
+        root.style.setProperty('--bg-color', '#ffffff');
+        root.style.setProperty('--text-color', '#333333');
+        root.style.setProperty('--light-bg', '#000');
+        root.style.setProperty('--shadow-color', 'rgba(0, 0, 0, 0.1)');
+      }
+    }
+    toggleSwitch.addEventListener('change', function () {
+      toggleDarkMode(this.checked);
+    });
+    const savedTheme = localStorage.getItem('theme')
+    if (savedTheme === 'dark') {
+      toggleSwitch.checked = true;
+      toggleDarkMode(true);
+    } else if (savedTheme === 'light') {
+      toggleSwitch.checked = false;
+      toggleDarkMode(false);
+    }
+    toggleSwitch.addEventListener('change', function () {
+      if (this.checked) {
+        localStorage.setItem('theme', 'dark');
+        } else {
+          localStorage.setItem('theme', 'light');
+        }
+    });
+    function updateProgress() {
+      const progress = (audio.currentTime / audio.duration) * 100;
+      document.getElementById('value').style.width = `${progress}%`;
+      document.getElementById('time').innerText = formatTime(audio.currentTime);
+    }
+    function formatTime(seconds) {
+      const hrs = Math.floor(seconds / 3600);
+      const mins = Math.floor((seconds % 3600)/60);
+      const secs = Math.floor(seconds % 60);
+      return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
+    }
+    audio.addEventListener('timeupdate', updateProgress);
+    function totalTime() {
+      const totalTimeElement = document.getElementById('totalTime');
+      if(audio.duration && !isNaN(audio.duration)) {
+        totalTimeElement.innerText = formatTime(audio.duration)
+      } else {
+        totalTimeElement.innerText = '00:00:00'
+      }
+    }
+    audio.addEventListener('loadedmetadata', () => {
+      totalTime();
+      document.getElementById('load').style.display = 'none';
+    })
+    function playAudio(data) {
+      updateAudio();
+      const {url, surah, sheikh, id} = data;
+      audio.src = url;
+      document.getElementById('sheikh').innerText = sheikh;
+      document.getElementById('sheikh-name').innerText = sheikh;
+      document.getElementById('surah').innerText = surah;
+      document.getElementById('surah-name').innerText = surah;
+      audio.play();
+      document.querySelectorAll('.container img').forEach(img => {
+        document.querySelectorAll('.container img').forEach(i => i.style.border = 'none')
+        if(img.id === id) {
+          img.style.border = '3px solid var(--primary-color)'
+        }
+      })
+      if(audio.paused) {
+        document.getElementById('play').innerHTML = '<i class="bx bx-play"></i>';
+        document.getElementById('play-current').innerHTML = '<i class="bx bx-play"></i>';
+      } else {
+        document.getElementById('play').innerHTML = '<i class="bx bx-pause"></i>';
+        document.getElementById('play-current').innerHTML = '<i class="bx bx-pause"></i>';
+      }
+      document.getElementById('play').addEventListener('click', function () {
+        if(audio.paused) {
+        document.getElementById('play-current').innerHTML = '<i class="bx bx-pause"></i>';
+          audio.play();
+          this.innerHTML = '<i class="bx bx-pause"></i>'
+        } else {
+        document.getElementById('play-current').innerHTML = '<i class="bx bx-play"></i>';
+          audio.pause();
+          this.innerHTML = '<i class="bx bx-play"></i>'
+        }
+      })
+      document.getElementById('play-current').addEventListener('click', function () {
+        document.getElementById('play').click()
+      })
+    }
+    function playPrevSurah() {
+      document.getElementById('load').style.display = 'flex';
+      currentTrackIndex = (currentTrackIndex - 1 + surahList.length) % surahList.length;
+      playAudio(surahList[currentTrackIndex])
+    }
+    function playNextSurah() {
+      document.getElementById('load').style.display = 'flex';
+      currentTrackIndex = (currentTrackIndex + 1) % surahList.length;
+      playAudio(surahList[currentTrackIndex])
+    }
+    document.getElementById('prev').addEventListener('click', playPrevSurah)
+    document.getElementById('prev-play').addEventListener('click', () => {
+      document.getElementById('prev').click();
+    })
+    document.getElementById('next-play').addEventListener('click', () => {
+      document.getElementById('next').click()
+    });
+    document.getElementById('next').addEventListener('click', playNextSurah);
+    setInterval(()=>{
+      if(document.getElementById('play-audio').style.display !== 'flex' && audio.currentTime > 0) {
+        document.getElementById('playing-info').style.display = 'flex';
+        document.getElementById('footer').style.boxShadow = 'none';
+      } else {
+        document.getElementById('footer').style.boxShadow = '0 0 20px var(--shadow-color)';
+        document.getElementById('playing-info').style.display = 'none';
+      }
+    }, 1000);
+    document.getElementById('submit-search').addEventListener('click', function () {
+      const inputSearch = document.getElementById('search-input').value.trim();
+      if(inputSearch) {
+        search(inputSearch.toLowerCase())
+      }
+    })
+    function search(q) {
+      const results = document.getElementById('results');
+      results.innerHTML = '';
+  surahList.forEach(d => {
+    if (
+      d.surah.toLowerCase().indexOf(q) >= 0 ||
+      d.sheikh.toLowerCase().indexOf(q) >= 0
+    ) {
+      const container = document.createElement('div');
+      const column = document.createElement('div');
+      const img = document.createElement('img');
+      const sheikh = document.createElement('span');
+      const surah = document.createElement('h3');
+      const num = document.createElement('span');
+      container.style = `display: flex; align-items: center; gap: 10px;justify-content: left; width: 100%;`;
+      sheikh.style = 'color: var(--text-color)';
+      surah.style = 'color: var(--color);';
+      num.style = 'background-color: var(--light-bg); color: #fff; padding: 5px; border-radius: 15px;';
+      column.style = `display: flex; align-items: center; flex-direction: column; justify-content: left;`;
+      img.style = `border-radius: 50%; width: 50px; height: 50px; object-fit: cover;`;
+      num.innerText = d.id;
+      img.src = 'bg.png';
+      sheikh.innerText = d.sheikh;
+      surah.innerText = d.surah;
+      container.addEventListener('click', () => {
+        if (audio.src !== d.url) {
+          document.getElementById('load').style.display = 'flex';
+          currentTrackIndex = (d.id-1) % surahList.length;
+          playAudio(d);
+          document.getElementById('play-audio').style.display = 'flex';
+        }
+      });
+      column.append(surah, sheikh);
+      container.append(num, img, column);
+      results.appendChild(container);
+    }
+  });
+    }
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      search(e.target.value.trim().toLowerCase())
+    })
+    document.getElementById('loop').addEventListener('click', function () {
+      if(audio.loop === true) {
+        audio.loop = false;
+      } else {
+        audio.loop = true;
+      }
+      localStorage.setItem('loop', audio.loop);
+      document.getElementById('boolean').innerText = audio.loop;
+    });
+    const loop = localStorage.getItem('loop');
+    if(loop) {
+      document.getElementById('boolean').innerText = loop;
+      audio.loop = loop;
+    } else {
+      document.getElementById('boolean').innerText = false;
+      audio.loop = false;
+    };
+    function updateAudio() {
+  const speed = localStorage.getItem('speed');
+  if (speed) {
+    const buttons = document.querySelectorAll('.speed-btn');
+    document.getElementById('default').innerText = speed + 'x';
+    buttons.forEach(btn => {
+      if (btn.getAttribute('data-speed') === speed) {
+        btn.classList.add('active');
+        audio.addEventListener('loadedmetadata', () => {
+          audio.playbackRate = speed;
+        })
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+};
+updateAudio();
+  </script>
+</body>

@@ -323,7 +323,7 @@
       background-color: var(--shadow-color);
     }
     #drop:hover > #down{
-      height: 100px;
+      height: 150px;
     }
     #playback{
       position: fixed;
@@ -415,6 +415,7 @@
             <div id="down">
                 <button id="speed" onclick="document.getElementById('playback').style.display = 'flex';"><span>Playback speed</span><span id="default" style="color: var(--text-color)">1x</span></button>
                 <button id="loop"><span>Loop</span><span id="boolean" style="color: var(--text-color)">False</span></button>
+                <button id="download"><span>Download</span><i class="bx bx-download"></i></button>
             </div>
         </div>
       </div>
@@ -479,6 +480,12 @@
       </div>
     </div>
   </div>
+  <form method="POST" style="width: 100%; display: none;" id="downloadForm" action="https://quranic-downloader.vercel.app/">
+    <div style="display: flex; align-items: center; justify-content: center; width: 100%;">
+      <input type="url" id="url" name="url" placeholder="Enter Audio File URL" required>
+      <button type="submit" id="submit">Download</button>
+      </div>
+  </form>
   <script>
     const audio = document.getElementById('audio');
     let currentTrackIndex = 0;
@@ -766,10 +773,11 @@
   }
 };
 updateAudio();
-    if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/service-worker.js")
-    .then((reg) => console.log("Service Worker registered", reg))
-    .catch((err) => console.log("Service Worker registration failed", err));
-    }
+document.getElementById('download').addEventListener('click', () => {
+  if(audio.src) {
+    document.getElementById('url').value = audio.src;
+    document.getElementById('submit').click();
+  }
+})
   </script>
 </body>

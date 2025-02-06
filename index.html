@@ -480,12 +480,6 @@
       </div>
     </div>
   </div>
-  <form method="POST" style="width: 100%; display: none;" id="downloadForm" action="https://quranic-downloader.vercel.app/">
-    <div style="display: flex; align-items: center; justify-content: center; width: 100%;">
-      <input type="url" id="url" name="url" placeholder="Enter Audio File URL" required>
-      <button type="submit" id="submit">Download</button>
-      </div>
-  </form>
   <script>
     const audio = document.getElementById('audio');
     let currentTrackIndex = 0;
@@ -774,10 +768,14 @@
 };
 updateAudio();
 document.getElementById('download').addEventListener('click', () => {
-  if(audio.src) {
-    document.getElementById('url').value = audio.src;
-    document.getElementById('submit').click();
+  // Ensure 'audio' is defined and has a valid 'src'
+  if (audio && audio.src) {
+    // Open the downloader URL with the audio source as a query parameter
+    window.open('https://quranic-downloader.vercel.app/?url=' + encodeURIComponent(audio.src));
+  } else {
+    // Notify the user if no audio source is available
+    alert('No audio source found. Please load an audio file first.');
   }
-})
+});
   </script>
 </body>

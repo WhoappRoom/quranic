@@ -25,6 +25,8 @@
       background-color: var(--bg-color);
       color: var(--color);
       user-select: none;
+      margin: 0;
+      padding: 0;
     }
     #footer {
       position: fixed;
@@ -212,19 +214,38 @@
       gap: 10px;
     }
     #progress-bar{
+      position: relative;
+      transition: width 0.2s ease-in-out;
       width: 100%;
       overflow: hidden;
-      height: 5px;
+      height: 25px;
       border-radius: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       margin-top: 20px;
+      background-color: transparent;
       margin-bottom: 20px;
-      background-color: var(--shadow-color);
     }
     #value{
+      position: relative;
       width: 0%;
-      height: 5px;
+      height: 20px;
       border-radius: 90px;
       background-color: var(--accent-color);
+    }
+    #value::before{
+      content: "";
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      right: 0;
+      width: 22px;
+      height: 22px;
+      background-color: var(--primary-color);
+      border-radius: 50%;
+      box-shadow: 0 0 5px var(--shadow-color);
+      cursor: grab;
     }
     #load{
       position: fixed;
@@ -323,7 +344,7 @@
       background-color: var(--shadow-color);
     }
     #drop:hover > #down{
-      height: 150px;
+      height: 200px;
     }
     #playback{
       position: fixed;
@@ -340,6 +361,114 @@
     .speed-btn{
       color: var(--text-color);
       font-size: 18px;
+    }
+    #popup{
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--shadow-color);
+    }
+    #sleep-timer{
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--shadow-color);
+    }
+    #sleep-timer-info{
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 0;
+      transition: 0.4s height;
+      border-radius: 15px;
+      background-color: var(--bg-color);
+      box-shadow: 0 0 20px var(--shadow-color);
+    }
+    #box{
+      width: 500px;
+      padding: 20px;
+      border-radius: 15px;
+      background-color: var(--bg-color);
+      box-shadow: 0 0 20px var(--shadow-color);
+    }
+    #box-top{
+      border-bottom: 1px solid var(--shadow-color);
+      width: 100%;
+    }
+    #btns button{
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 90px;
+      margin-top: 20px;
+    }
+    #sleep-timer-info button{
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+    }
+    #btns button i{
+      font-size: 25px;
+    }
+    #box button:active{
+      background-color: var(--shadow-color);
+    }
+    #sleep-timer-info button:active{
+      background-color: var(--shadow-color);
+    }
+    .checked{
+      position: relative;
+    }
+    .checked:before{
+      position: absolute;
+      content: "✓";
+      right: 5px;
+      border: 2px solid var(--primary-color);
+      color: var(--primary-color);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 20px;
+      aspect-ratio: 1;
+    }
+    #timeLeft{
+      position: fixed;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      top: 13px;
+      padding: 5px 20px;
+      display: none;
+      background-color: var(--bg-color);
+      box-shadow: 0 0 20px var(--shadow-color);
+      border-radius: 0px 0px 15px 15px;
+    }
+    .timeout{
+      animation: 1s l linear infinite;
+      color: var(--color);
+    }
+    @keyframes l {
+      10% {
+        color: var(--text-color);
+      }
     }
   </style>
 </head>
@@ -415,6 +544,7 @@
             <div id="down">
                 <button id="speed" onclick="document.getElementById('playback').style.display = 'flex';"><span>Playback speed</span><span id="default" style="color: var(--text-color)">1x</span></button>
                 <button id="loop"><span>Loop</span><span id="boolean" style="color: var(--text-color)">False</span></button>
+                <button id="sleep" onclick="document.getElementById('sleep-timer').style.display = 'flex';setTimeout(()=>{document.getElementById('sleep-timer-info').style = 'height: calc(55vh);padding: 20px;'},100)"><span>Sleep Timer</span><span id="off-on" style="color: var(--text-color)">Off</span></button>
                 <button id="download"><span>Download</span><i class="bx bx-download"></i></button>
             </div>
         </div>
@@ -438,7 +568,9 @@
             <div id="totalTime">00:00:00</div>
           </div>
           <div id="progress-bar">
-            <div id="value"></div>
+            <div style="width: 100%; background-color: var(--shadow-color);height: 15px;border-radius: 90px;display: flex;align-items: center;justify-content: left;">
+              <div id="value"></div>
+            </div>
           </div>
         </div>
         <div class="controls">
@@ -479,11 +611,46 @@
         </div>
       </div>
     </div>
+    <div id="popup">
+      <div id="box">
+        <div id="box-top">
+          <button id="close4" onclick="document.getElementById('popup').style.display = 'none'"><i class="bx bx-x"></i></button>
+        </div>
+        <div id="btns">
+          <button id="play-popup"><span>Play</span><i class="bx bx-play"></i></button>
+          <button id="download-popup"><span>Download</span><i class="bx bx-download"></i></button>
+        </div>
+      </div>
+    </div>
+    <div id="timeLeft"></div>
+    <div id="sleep-timer">
+      <button onclick="document.getElementById('sleep-timer-info').style.height = '0';setTimeout(()=>{document.getElementById('sleep-timer').style.display = 'none'},100);" style="position: fixed; left: 0; right: 0; top: 0; bottom: 0;color: transparent; background-color: transparent; z-index: 0;"></button>
+      <div id="sleep-timer-info" style="z-index: 10;">
+        <div>
+          <span>Sleep Timer</span>
+        </div>
+        <div id="sleep-btns">
+          <button data-sleep="off" class="checked">Off</span></button>
+          <button data-sleep="5">5 Minutes</button>
+          <button data-sleep="10">10 Minutes</button>
+          <button data-sleep="15">15 Minutes</button>
+          <button data-sleep="20">20 Minutes</button>
+          <button data-sleep="25">25 Minutes</button>
+          <button data-sleep="30">30 Minutes</button>
+          <button data-sleep="35">35 Minutes</button>
+          <button data-sleep="40">40 Minutes</button>
+          <button data-sleep="1">1 Hour</button>
+          <button data-sleep="end">End of Audio</button>
+        </div>
+      </div>
+    </div>
   </div>
   <script>
     const audio = document.getElementById('audio');
+    let url = '';
     let currentTrackIndex = 0;
     let surahList = [];
+    let isDragging = false;
     document.querySelectorAll('#footer button').forEach(btn => {
       btn.addEventListener('click', function () {
         document.querySelectorAll('#footer button').forEach(b => b.classList.remove('active'));
@@ -541,6 +708,37 @@
         const num = document.createElement('span');
         img.src = '/bg.png';
         img.id = item.id;
+        let pressTimer;
+        function startLongPress() {
+          pressTimer = setTimeout(() => {
+            container.dispatchEvent(new Event('longpress'));
+          }, 1000);
+        }
+        function cancelLongPress() {
+          clearTimeout(pressTimer);
+        }
+        container.addEventListener('longpress', () => {
+          if (!url || url !== item.url) {
+            url = item.url;
+          }
+          document.getElementById('popup').style.display = 'flex';
+          const downloadBtn = document.getElementById('download-popup');
+          downloadBtn.replaceWith(downloadBtn.cloneNode(true));
+          const newDownloadBtn = document.getElementById('download-popup');
+          newDownloadBtn.addEventListener('click', function () {
+            document.getElementById('popup').style.display = 'none';
+            window.open('https://quranic-downloader.vercel.app/?url=' + encodeURIComponent(url));
+          });
+
+  document.getElementById('play-popup').addEventListener('click', function () {
+    playAudio(item);
+    document.getElementById('popup').style.display = 'none';
+    document.getElementById('play-audio').style.display = 'flex';
+  }, { once: true }); // Kaliya hal mar
+});
+        container.addEventListener('touchstart', startLongPress);
+        container.addEventListener('touchend', cancelLongPress);
+        container.addEventListener('touchcancel', cancelLongPress);
         img.addEventListener('click', () => {
           if (audio.src !== item.url) {
             document.getElementById('load').style.display = 'flex';
@@ -680,7 +878,9 @@
       if(document.getElementById('play-audio').style.display !== 'flex' && audio.currentTime > 0) {
         document.getElementById('playing-info').style.display = 'flex';
         document.getElementById('footer').style.boxShadow = 'none';
+        document.getElementById('playing-info').style.boxShadow = '0 0 20px var(--shadow-color)';
       } else {
+        document.getElementById('playing-info').style.boxShadow = 'none';
         document.getElementById('footer').style.boxShadow = '0 0 20px var(--shadow-color)';
         document.getElementById('playing-info').style.display = 'none';
       }
@@ -777,5 +977,176 @@ document.getElementById('download').addEventListener('click', () => {
     alert('No audio source found. Please load an audio file first.');
   }
 });
+// Function to update the off-on text based on sleep timer value
+// Function to update the off-on text based on sleep timer value
+function updateOffOnText() {
+  const sleepTimer = localStorage.getItem('sleep-timer');
+  const offOnElement = document.getElementById('off-on');
+  
+  if (sleepTimer === 'off') {
+    offOnElement.innerText = 'Off';
+  } else if (sleepTimer === '1') {
+    offOnElement.innerText = sleepTimer + 'H';
+  } else if (sleepTimer === 'end') {
+    offOnElement.innerText = 'End of audio';
+  } else {
+    offOnElement.innerText = sleepTimer + 'Min';
+  }
+}
+
+// Global variable to track the countdown interval
+let countdownInterval = null;
+
+// Function to handle the interval sleep timer
+function intervalSleepTimer() {
+  const sleepTimer = localStorage.getItem('sleep-timer');
+  
+  let timeLeft = 0;
+
+  if (countdownInterval) {
+    clearInterval(countdownInterval); // Clear previous interval
+  }
+
+  if (sleepTimer === 'off') {
+    return; // No timer is set
+  } else if (sleepTimer === 'end') {
+    audio.loop = false;
+    audio.addEventListener('ended', () => {
+      pauseAudio();
+    });
+    return;
+  } else if (sleepTimer === '1') {
+    timeLeft = 60 * 60; // 1 hour in seconds
+  } else {
+    timeLeft = parseInt(sleepTimer) * 60; // Convert minutes to seconds
+  }
+
+  countdownInterval = setInterval(() => {
+    if (timeLeft <= 0) {
+      clearInterval(countdownInterval); // Clear the interval when timer reaches 0
+      pauseAudio(); // Pause the audio when the timer finishes
+      document.getElementById('timeLeft').style.display = 'none';
+    } else {
+      timeLeft--; // Decrease time left by 1 second
+      document.getElementById('timeLeft').style.display = 'block';
+      document.getElementById('timeLeft').innerText = formatTime(timeLeft);
+      if (timeLeft <= 10) {
+        document.getElementById('timeLeft').classList.add('timeout');
+      } else {
+        document.getElementById('timeLeft').classList.remove('timeout');
+      }
+    }
+  }, 1000); // Runs every second
+}
+
+// Function to pause the audio element
+function pauseAudio() {
+  const audioElement = document.getElementById('audio');
+  if (audioElement) {
+    audioElement.pause(); // Pause the audio
+    audioElement.loop = false; // Ensure the audio doesn't loop after pausing
+  }
+}
+
+// Ensure the timer resets correctly when audio metadata loads
+document.getElementById('audio').addEventListener('loadedmetadata', function() {
+  if (countdownInterval) {
+    clearInterval(countdownInterval);
+  }
+  intervalSleepTimer();
+  const sleepTimer = localStorage.getItem('sleep-timer');
+  if (sleepTimer === 'end') {
+    audio.loop = false;
+  }
+});
+
+// Ensure playback stops if sleep timer is set to "end"
+document.getElementById('audio').addEventListener('ended', function() {
+  if (localStorage.getItem('sleep-timer') === 'end') {
+    pauseAudio();
+  }
+});
+
+document.querySelectorAll('#sleep-timer-info button').forEach(b => b.classList.remove('checked'));
+document.querySelectorAll('#sleep-timer-info button').forEach(btn => {
+  btn.addEventListener('click', function () {
+    document.querySelectorAll('#sleep-timer-info button').forEach(b => b.classList.remove('checked'));
+    this.classList.add('checked');
+    localStorage.setItem('sleep-timer', this.getAttribute('data-sleep'));
+    intervalSleepTimer();
+    updateOffOnText();
+  });
+
+  // Set the checked class on page load
+  const sleepTimer = localStorage.getItem('sleep-timer');
+  if (sleepTimer && sleepTimer === btn.getAttribute('data-sleep')) {
+    btn.classList.add('checked');
+  }
+});
+
+// Update the off-on text when the page loads
+updateOffOnText();
+
+// Ensure play/pause button updates correctly
+audio.addEventListener('play', (e) => {
+  document.getElementById('play').innerHTML = '<i class="bx bx-pause"></i>';
+  document.getElementById('play-current').innerHTML = '<i class="bx bx-pause"></i>';
+});
+audio.addEventListener('pause', () => {
+  document.getElementById('play').innerHTML = '<i class="bx bx-play"></i>';
+  document.getElementById('play-current').innerHTML = '<i class="bx bx-play"></i>';
+});
+audio.addEventListener("timeupdate", () => {
+  if (!isDragging) {
+    const progress = (audio.currentTime / audio.duration) * 100;
+    document.getElementById('value').style.width = progress + "%";
+  }
+});
+function updateProgress(clientX) {
+      const rect = document.getElementById('progress-bar').getBoundingClientRect();
+      const offsetX = clientX - rect.left;
+      const width = rect.width;
+      let newTime = (offsetX / width) * audio.duration;
+
+      if (newTime < 0) newTime = 0;
+      if (newTime > audio.duration) newTime = audio.duration;
+
+      document.getElementById('value').style.width = (newTime / audio.duration) * 100 + "%";
+      return newTime;
+    }
+
+    // **Mouse Events (Desktop)**
+    document.getElementById('progress-bar').addEventListener("mousedown", (e) => {
+      isDragging = true;
+      audio.currentTime = updateProgress(e.clientX);
+    });
+
+    document.addEventListener("mousemove", (e) => {
+      if (isDragging) {
+        audio.currentTime = updateProgress(e.clientX);
+      }
+    });
+
+    document.addEventListener("mouseup", () => {
+      isDragging = false;
+    });
+
+    // **Touch Events (Mobile)**
+    document.getElementById('progress-bar').addEventListener("touchstart", (e) => {
+      isDragging = true;
+      e.preventDefault();
+      audio.currentTime = updateProgress(e.touches[0].clientX);
+    });
+
+    document.addEventListener("touchmove", (e) => {
+      if (isDragging) {
+        e.preventDefault();
+        audio.currentTime = updateProgress(e.touches[0].clientX);
+      }
+    });
+
+    document.addEventListener("touchend", () => {
+      isDragging = false;
+    });
   </script>
 </body>

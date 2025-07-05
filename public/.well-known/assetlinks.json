@@ -1,1 +1,8 @@
-
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.vercel.quranic_tau.twa",
+        "sha256_cert_fingerprints": ["A7:8B:BD:6D:9D:D4:7F:10:A6:8A:D8:8D:69:E5:A1:81:BF:ED:65:A0:E4:B2:0A:DB:E6:34:CE:24:BD:8A:7F:FA"]
+      }
+    }]

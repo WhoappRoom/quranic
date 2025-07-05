@@ -1,8 +1,14 @@
-[{
-      "relation": ["delegate_permission/common.handle_all_urls"],
-      "target": {
-        "namespace": "android_app",
-        "package_name": "app.vercel.quranic_tau.twa",
-        "sha256_cert_fingerprints": ["A7:8B:BD:6D:9D:D4:7F:10:A6:8A:D8:8D:69:E5:A1:81:BF:ED:65:A0:E4:B2:0A:DB:E6:34:CE:24:BD:8A:7F:FA"]
-      }
-    }]
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "app.vercel.quranic_tau.twa",
+      "sha256_cert_fingerprints": [
+        "AD:9A:CB:2D:17:E0:1C:36:00:79:11:1E:77:F7:83:77:89:D7:46:12:76:8A:8C:86:F2:AA:6D:E5:23:87:8B:8C"
+      ]
+    }
+  }
+]

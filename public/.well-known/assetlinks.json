@@ -7,7 +7,8 @@
       "namespace": "android_app",
       "package_name": "app.vercel.quranic_tau.twa",
       "sha256_cert_fingerprints": [
-        "AD:9A:CB:2D:17:E0:1C:36:00:79:11:1E:77:F7:83:77:89:D7:46:12:76:8A:8C:86:F2:AA:6D:E5:23:87:8B:8C"
+        "AD:9A:CB:2D:17:E0:1C:36:00:79:11:1E:77:F7:83:77:89:D7:46:12:76:8A:8C:86:F2:AA:6D:E5:23:87:8B:8C",
+        "F8:35:1C:72:72:39:88:A4:BE:40:55:09:3F:2B:56:F2:81:F8:12:30:E2:7C:D6:70:6B:E5:9D:E8:8B:72:EE:AC"
       ]
     }
   }

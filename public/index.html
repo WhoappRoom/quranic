@@ -955,8 +955,14 @@ function updateProgress(clientX) {
    audio.addEventListener('ended', function () {
       const loop = localStorage.getItem('loop');
       const autoPlayNext = localStorage.getItem('autoPlayNext');
-      if(!loop && autoPlayNext === 'true') {
+      if(loop === 'true') {
+        audio.currentTime = 0;
+        audio.play();
+      } else if(autoPlayNext === 'true') {
         playNextSurah();
+      } else {
+        document.getElementById('play').innerHTML = '<i class="bx bx-play"></i>';
+        document.getElementById('play-current').innerHTML = '<i class="bx bx-play"></i>';
       }
     });
     document.getElementById('autoPlayNext').addEventListener('click', function () {
